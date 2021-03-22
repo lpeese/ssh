@@ -1,0 +1,6 @@
+os: linux
+dist: focal
+language: shell
+
+script:
+ - sudo /bin/bash travisci/ssh.sh
