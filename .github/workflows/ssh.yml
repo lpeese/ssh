@@ -1,17 +1,23 @@
-name: Github Actions
+name: GitHub SSH
 
 on:
   push:
     branches:
-      - master
+    - master
 
 jobs:
-  build:
+  run:
     runs-on: ubuntu-latest
     steps:
-      - uses: shaowenchen/debugger-action@v2
-        name: debugger
-        timeout-minutes: 360
-        continue-on-error: true
-        with:
-          ngrok_token: ${{ secrets.NGROK_TOKEN }}
+      - uses: actions/checkout@v2
+
+      - name: change password
+        run: echo "runner:runner" | sudo chpasswd
+
+      - name: ngrok
+        run: |
+          curl -skL -o /tmp/ngrok.zip https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+          unzip -d /tmp /tmp/ngrok.zip
+          chmod +x /tmp/ngrok
+          /tmp/ngrok authtoken ${{ secrets.NGROK_TOKEN }}
+          /tmp/ngrok tcp 22 --log stdout
